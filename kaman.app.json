@@ -1,0 +1,72 @@
+{
+  "name": "Failed Provisioning Remediator",
+  "agents": {
+    "diagnostician": "0118fb62-0539-5446-9dc8-5943d70286c3",
+    "remediator": "d29d391c-f973-5122-a414-dce1fe3c432f"
+  },
+  "workflows": {
+    "flow": "c3e06030-b7f6-5b3d-b9e4-1a1f7b659783"
+  },
+  "ui": {
+    "title": "Failed Provisioning Remediator",
+    "tagline": "Picks up a failed provisioning job, finds the root cause from logs and live state, and fixes it - automatically when the fix is on your safe list and low risk, otherwise after an operator approves, with on-call paged if nobody answers.",
+    "actions": [
+      {
+        "id": "run",
+        "label": "Run: Failed provisioning remediation",
+        "description": "A provisioning job fails. Kaman classifies the failure, diagnoses it from the job logs and the resource's live state, plans a remediation and runs it automatically only if it is on the safe list and low risk; anything else waits for an operator, and an unanswered request pages on-call.",
+        "kind": "workflow",
+        "target": "flow",
+        "wrap": "payload",
+        "inputs": [
+          {
+            "name": "job_id",
+            "label": "Job id",
+            "kind": "text",
+            "default": "PRV-88213"
+          },
+          {
+            "name": "request",
+            "label": "Request",
+            "kind": "text",
+            "default": "Linux VM, 8 vCPU / 32 GB, app tier, cluster C2"
+          },
+          {
+            "name": "error",
+            "label": "Error",
+            "kind": "text",
+            "default": "Timeout waiting for IP address from DHCP after 600s"
+          },
+          {
+            "name": "requested_by",
+            "label": "Requested by",
+            "kind": "text",
+            "default": "app-team-payments"
+          },
+          {
+            "name": "failed_at",
+            "label": "Failed at",
+            "kind": "text",
+            "default": "2026-10-01T07:12:00Z"
+          }
+        ]
+      },
+      {
+        "id": "ask",
+        "label": "Ask the Provisioning Diagnostician",
+        "description": "Finds why a provisioning job failed from AWS's logs, EC2 state and Health events.",
+        "kind": "agent",
+        "target": "diagnostician",
+        "prompt": "{{question}}",
+        "inputs": [
+          {
+            "name": "question",
+            "label": "Your question",
+            "kind": "text",
+            "default": "Diagnose job PRV-88213."
+          }
+        ]
+      }
+    ]
+  }
+}
